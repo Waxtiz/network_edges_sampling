@@ -116,8 +116,8 @@ get_me_sample_path <- function(net,                       # Network
                                number = 1,                # number of desired section
                                min_length = 2000,         # minimal length of section (using unit of crs)
                                max_length = 5000,         # maximal length of section (using unit of crs)
-                               overlap = "no"             # can the paths overlap? ("yes"/"no")
-                              ) {
+                               overlap = FALSE) {         # can the paths overlap? (TRUE/FALSE)
+
 
   # just progress bar for long statment
   pb <- progress_bar$new(format = "(:spin) [:bar] :percent [Elapsed time: :elapsed || Estimated time: :eta]",
@@ -140,17 +140,16 @@ get_me_sample_path <- function(net,                       # Network
                  current_length < max_length,             # checks if the length is between min/max
                ifelse(i == 0,                             # If yes, check if this is the first path
                       break,                              # If is the first path, break the loop
-                      ifelse(overlap == "no" |            # If user don't want overlap, check intersection
-                             overlap == "n",
+                      ifelse(isFALSE(overlap),            # If user don't want overlap, check intersection
                              ifelse(sum(st_intersects(path, paths_df, sparse = F)) == 0,
                                     break,                # if there is no intersection, break the loop
                                     next                  # if there is intersection, try again
                                     ),
-                             ifelse(overlap == "yes" |    # If user want overlap,
-                                    overlap == "y",
+                             ifelse(isTRUE(overlap),      # If user want overlap,
                                     break,                # break loop
                                     stop('\n',            # If the answer is not clear, put an error
-                                         'Do you want overlapping paths? Accepted values: "yes" / "no"',
+                                         'Do you want overlapping paths?','\n',
+                                         'Accepted values: "TRUE" for yes, "FALSE" for no',
                                          call. = F)
                                    )
                              )
@@ -195,7 +194,7 @@ net <- ign_road %>%
 
 
 
-path <- get_me_sample_path(net, 10, 3000, 5000, "y")
+path <- get_me_sample_path(net, 30, 25000, 35000, overlap = F)
 
 
 # Visualise result
@@ -208,4 +207,4 @@ ggplot() +
   labs(color = "Paths")
 
 
-st_length(path)
+ifelse(isTRUE(test), "yes, is true", "nop")
