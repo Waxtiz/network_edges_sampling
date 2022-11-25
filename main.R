@@ -186,6 +186,7 @@ ign_road <- st_read("./input/small_ign_road.shp")
 
 # transform the road layer to network
 net <- ign_road %>%
+  st_transform(4326) %>%
   st_zm(drop = T) %>%                                     # drop Z and M geometry for hide warnings
   as_sfnetwork(directed = FALSE) %>%                      # transform the road layer to not directed network
   activate("edges") %>%
